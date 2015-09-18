@@ -6,7 +6,6 @@ from boto.s3.lifecycle import Lifecycle, Transition, Rule
 import sys, getopt, json
 
 def update_lifecycle(*args,**kwargs):
-    rules = kwargs['rules']
     config = kwargs['config']
     default_to_glacier = Transition(days=7, storage_class='GLACIER')
     default_rule = Rule('default-to-glacier', '', 'Enabled', expiration=20, transition=default_to_glacier)
