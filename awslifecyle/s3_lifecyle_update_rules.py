@@ -20,7 +20,12 @@ def update_lifecycle(*args,**kwargs):
     rs = conn.get_all_buckets()
     for b in rs:
         secure = None
-        bucket = conn.get_bucket(b)
+        try :
+            bucket = conn.get_bucket(b)
+        except Exception as err :
+            err = "ERROR : Can't get bucket : %s \n %s \n" %(b.name, err)
+            print >> sys.stderr, err
+            continue
         if "aps" in b.name:
             rule_to_use = aps_rule
             expiration_to_use = 180
@@ -43,8 +48,12 @@ def update_lifecycle(*args,**kwargs):
                     lifecycle.append(rule_secure)
         else :
             lifecycle.append(rule_to_use)
-        bucket.configure_lifecycle(lifecycle)
-        show_lifecycle(bucket)
+        try:
+            bucket.configure_lifecycle(lifecycle)
+            show_lifecycle(bucket)
+        except Exception as err:
+            err = "ERROR : Can't use this lifecycle configuration ( bucket : %s ) \n %s \n" %(b.name, err)
+            print >> sys.stderr, err
 
 def show_lifecycle(bucket):
     print "############# bucket : ", bucket.name
